@@ -208,7 +208,7 @@ impl<M: Middleware> Multicall<M> {
                     .map_err(ContractError::from_middleware_error)?
                     .as_u64();
                 if !constants::MULTICALL_SUPPORTED_CHAIN_IDS.contains(&chain_id) {
-                    return Err(error::MulticallError::InvalidChainId(chain_id))
+                    return Err(error::MulticallError::InvalidChainId(chain_id));
                 }
                 constants::MULTICALL_ADDRESS
             }
@@ -253,7 +253,7 @@ impl<M: Middleware> Multicall<M> {
             (_, Some(chain_id)) => {
                 let chain_id = chain_id.into();
                 if !constants::MULTICALL_SUPPORTED_CHAIN_IDS.contains(&chain_id) {
-                    return Err(error::MulticallError::InvalidChainId(chain_id))
+                    return Err(error::MulticallError::InvalidChainId(chain_id));
                 }
                 constants::MULTICALL_ADDRESS
             }
@@ -341,7 +341,7 @@ impl<M: Middleware> Multicall<M> {
             TypedTransaction::DepositTransaction(tx) => (tx.tx.to, tx.tx.data, tx.tx.value),
         };
         if data.is_none() && !call.function.outputs.is_empty() {
-            return self
+            return self;
         }
         if let Some(NameOrAddress::Address(target)) = to {
             let call = Call {
@@ -679,7 +679,7 @@ impl<M: Middleware> Multicall<M> {
                 // still do so because of other calls that are in the same multicall
                 // aggregate.
                 if !success && !call.allow_failure {
-                    return Err(error::MulticallError::IllegalRevert)
+                    return Err(error::MulticallError::IllegalRevert);
                 }
 
                 Err(return_data)
@@ -733,7 +733,7 @@ impl<M: Middleware> Multicall<M> {
 
     /// v1
     #[inline]
-    fn as_aggregate(&self) -> ContractCall<M, (U256, Vec<Bytes>)> {
+    pub fn as_aggregate(&self) -> ContractCall<M, (U256, Vec<Bytes>)> {
         // Map the calls vector into appropriate types for `aggregate` function
         let calls: Vec<Multicall1Call> = self
             .calls
@@ -750,7 +750,7 @@ impl<M: Middleware> Multicall<M> {
 
     /// v2
     #[inline]
-    fn as_try_aggregate(&self) -> ContractCall<M, Vec<MulticallResult>> {
+    pub fn as_try_aggregate(&self) -> ContractCall<M, Vec<MulticallResult>> {
         let mut allow_failure = false;
         // Map the calls vector into appropriate types for `try_aggregate` function
         let calls: Vec<Multicall1Call> = self
@@ -774,7 +774,7 @@ impl<M: Middleware> Multicall<M> {
 
     /// v3
     #[inline]
-    fn as_aggregate_3(&self) -> ContractCall<M, Vec<MulticallResult>> {
+    pub fn as_aggregate_3(&self) -> ContractCall<M, Vec<MulticallResult>> {
         // Map the calls vector into appropriate types for `aggregate_3` function
         let calls: Vec<Multicall3Call> = self
             .calls
@@ -795,7 +795,7 @@ impl<M: Middleware> Multicall<M> {
 
     /// v3 + values (only .send())
     #[inline]
-    fn as_aggregate_3_value(&self) -> ContractCall<M, Vec<MulticallResult>> {
+    pub fn as_aggregate_3_value(&self) -> ContractCall<M, Vec<MulticallResult>> {
         // Map the calls vector into appropriate types for `aggregate_3_value` function
         let mut total_value = U256::zero();
         let calls: Vec<Multicall3CallValue> = self
@@ -836,6 +836,11 @@ impl<M: Middleware> Multicall<M> {
         } else {
             call
         }
+    }
+
+    /// Public method to access the private `calls` field.
+    pub fn get_calls(&self) -> &Vec<Call> {
+        &self.calls
     }
 }
 
