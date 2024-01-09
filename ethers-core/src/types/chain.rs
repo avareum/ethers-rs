@@ -159,6 +159,7 @@ pub enum Chain {
 
     Base = 8453,
     BaseGoerli = 84531,
+    BaseSepolia = 84532,
 
     Linea = 59144,
     LineaTestnet = 59140,
@@ -176,6 +177,8 @@ pub enum Chain {
     #[strum(to_string = "mantle-testnet")]
     #[serde(alias = "mantle_testnet")]
     MantleTestnet = 5001,
+
+    Viction = 88,
 
     Zora = 7777777,
     ZoraGoerli = 999,
@@ -314,13 +317,13 @@ impl Chain {
             FilecoinCalibrationTestnet | FilecoinMainnet => 30_000,
             Scroll | ScrollSepolia | ScrollAlphaTestnet => 3_000,
             Gnosis | Chiado => 5_000,
+            Viction => 2_000,
             // Explicitly exhaustive. See NB above.
             Morden | Ropsten | Rinkeby | Goerli | Kovan | Sepolia | Holesky | Moonbase |
             MoonbeamDev | OptimismKovan | Poa | Sokol | Rsk | EmeraldTestnet | Boba | Base |
-            BaseGoerli | ZkSync | ZkSyncTestnet | PolygonZkEvm | PolygonZkEvmTestnet | Metis |
-            Linea | LineaTestnet | Mantle | MantleTestnet | Zora | ZoraGoerli | ZoraSepolia => {
-                return None
-            }
+            BaseGoerli | BaseSepolia | ZkSync | ZkSyncTestnet | PolygonZkEvm |
+            PolygonZkEvmTestnet | Metis | Linea | LineaTestnet | Mantle | MantleTestnet |
+            Zora | ZoraGoerli | ZoraSepolia => return None,
         };
 
         Some(Duration::from_millis(ms))
@@ -362,6 +365,7 @@ impl Chain {
             PolygonZkEvm |
             PolygonZkEvmTestnet |
             Metis |
+            Viction |
             Scroll |
             ScrollSepolia => true,
 
@@ -372,6 +376,7 @@ impl Chain {
             Holesky |
             Base |
             BaseGoerli |
+            BaseSepolia |
             Optimism |
             OptimismGoerli |
             OptimismSepolia |
@@ -572,6 +577,7 @@ impl Chain {
             Base => ("https://api.basescan.org/api", "https://basescan.org"),
 
             BaseGoerli => ("https://api-goerli.basescan.org/api", "https://goerli.basescan.org"),
+            BaseSepolia => ("https://api-sepolia.basescan.org/api", "https://sepolia.basescan.org"),
 
             ZkSync => {
                 ("https://zksync2-mainnet-explorer.zksync.io/", "https://explorer.zksync.io/")
@@ -602,6 +608,7 @@ impl Chain {
                 // new chain
                 return None
             }
+            Viction => ("https://www.vicscan.xyz/api", "https://www.vicscan.xyz"),
         };
 
         Some(urls)
@@ -651,6 +658,7 @@ impl Chain {
             Mantle |
             MantleTestnet |
             BaseGoerli |
+            BaseSepolia |
             Gnosis |
             Scroll |
             ScrollSepolia => "ETHERSCAN_API_KEY",
@@ -686,6 +694,7 @@ impl Chain {
             ZkSyncTestnet |
             FilecoinMainnet |
             LineaTestnet |
+            Viction |
             FilecoinCalibrationTestnet => return None,
         };
 
@@ -763,6 +772,7 @@ mod tests {
             (ZkSync, &["zksync"]),
             (Mantle, &["mantle"]),
             (MantleTestnet, &["mantle-testnet"]),
+            (Viction, &["viction"]),
         ];
 
         for &(chain, aliases) in ALIASES {
